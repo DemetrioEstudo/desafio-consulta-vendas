@@ -1,5 +1,8 @@
 package com.devsuperior.dsmeta.repositories;
 
+import com.devsuperior.dsmeta.dto.SaleReportDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import com.devsuperior.dsmeta.entities.Sale;
@@ -11,14 +14,17 @@ import java.util.List;
 
 public interface SaleRepository extends JpaRepository<Sale, Long> {
 
-    @Query("SELECT s FROM Sale s JOIN s.seller sel WHERE " +
+    @Query("SELECT new com.devsuperior.dsmeta.dto.SaleReportDTO(" +
+            "s.id, s.date, s.amount, sel.name) " +
+            "FROM Sale s JOIN s.seller sel WHERE " +
             "LOWER(sel.name) LIKE LOWER(CONCAT('%', :name, '%')) " +
             "AND s.date BETWEEN :minDate AND :maxDate " +
             "ORDER BY s.date DESC")
-    List<Sale> findSalesBySellerNameAndDateBetween(
+    Page<SaleReportDTO> findSalesReport(
             @Param("name") String name,
             @Param("minDate") LocalDate minDate,
-            @Param("maxDate") LocalDate maxDate
+            @Param("maxDate") LocalDate maxDate,
+            Pageable pageable
     );
 
 

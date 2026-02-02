@@ -3,33 +3,36 @@ package com.devsuperior.dsmeta.services;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
-import java.util.List;
 import java.util.Optional;
 
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
+import com.devsuperior.dsmeta.dto.SaleReportDTO;
 import com.devsuperior.dsmeta.entities.Sale;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.stereotype.Service;
 import com.devsuperior.dsmeta.repositories.SaleRepository;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.data.domain.Pageable;
 
 
 @Service
 public class SaleService {
 
-	@Autowired
-	private SaleRepository repository;
+    @Autowired
+    private SaleRepository saleRepository;
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_DATE;
-	
-	public SaleMinDTO findById(Long id) {
-		Optional<Sale> result = repository.findById(id);
-		Sale entity = result.get();
-		return new SaleMinDTO(entity);
-	}
+
+    public SaleMinDTO findById(Long id) {
+        Optional<Sale> result = saleRepository.findById(id);
+        Sale entity = result.get();
+        return new SaleMinDTO(entity);
+    }
+
 
     @Transactional(readOnly = true)
-    public List<Sale> getReport(String name, String minDate, String maxDate) {
+    public Page<SaleReportDTO> getReport(String name, String minDate, String maxDate, Pageable pageable) {
         // Trata o nome
         String finalName = (name != null && !name.trim().isEmpty()) ? name.trim() : "";
 
@@ -45,11 +48,7 @@ public class SaleService {
             finalMinDate = finalMaxDate.minusYears(1);
         }
 
-        return repository.findSalesBySellerNameAndDateBetween(
-                finalName,
-                finalMinDate,
-                finalMaxDate
-        );
+        return saleRepository.findSalesReport(finalName, finalMinDate, finalMaxDate, pageable);
     }
 
     private LocalDate parseDate(String dateStr) {
@@ -64,8 +63,3 @@ public class SaleService {
         }
     }
 }
-
-
-
-
-
