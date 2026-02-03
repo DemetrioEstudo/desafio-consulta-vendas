@@ -1,6 +1,7 @@
 package com.devsuperior.dsmeta.controllers;
 
 import com.devsuperior.dsmeta.dto.SaleReportDTO;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,9 +39,17 @@ public class SaleController {
         return ResponseEntity.ok(page);
     }
 
-	@GetMapping(value = "/summary")
-	public ResponseEntity<?> getSummary() {
-		// TODO
-		return null;
-	}
+
+    @GetMapping(value = "/summary")
+    public ResponseEntity<Page<SaleSummaryDTO>> getSummary(
+            @RequestParam(required = false, defaultValue = "") String minDate,
+            @RequestParam(required = false, defaultValue = "") String maxDate,
+            Pageable pageable
+    ) {
+        Page<SaleSummaryDTO> list = service.getSummary(minDate, maxDate, pageable);
+        return ResponseEntity.ok(list);
+    }
+
+
+
 }

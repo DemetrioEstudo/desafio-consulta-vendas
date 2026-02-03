@@ -3,10 +3,12 @@ package com.devsuperior.dsmeta.services;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
+import java.util.List;
 import java.util.Optional;
 
 import com.devsuperior.dsmeta.dto.SaleMinDTO;
 import com.devsuperior.dsmeta.dto.SaleReportDTO;
+import com.devsuperior.dsmeta.dto.SaleSummaryDTO;
 import com.devsuperior.dsmeta.entities.Sale;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,6 +52,28 @@ public class SaleService {
 
         return saleRepository.findSalesReport(finalName, finalMinDate, finalMaxDate, pageable);
     }
+
+
+    @Transactional(readOnly = true)
+    public Page<SaleSummaryDTO> getSummary(String minDate, String maxDate, Pageable pageable) {
+        LocalDate finalMaxDate = parseDate(maxDate);
+        if (finalMaxDate == null) {
+            finalMaxDate = LocalDate.now();
+        }
+
+        LocalDate finalMinDate = parseDate(minDate);
+        if (finalMinDate == null) {
+            finalMinDate = finalMaxDate.minusYears(1);
+        }
+
+        return saleRepository.findSalesSummary(finalMinDate, finalMaxDate,pageable);
+    }
+
+
+
+
+
+
 
     private LocalDate parseDate(String dateStr) {
         if (dateStr == null || dateStr.trim().isEmpty()) {
