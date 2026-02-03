@@ -4,10 +4,6 @@
 
 Este projeto é um **exercício prático** desenvolvido durante a formação DevSuperior. Trata-se de uma API REST para consulta e relatórios de vendas.
 
-## 🎯 Enunciado do Desafio
-
-![Enunciado do Exercício](https://github.com/user-attachments/assets/enunciado-desafio.png)
-
 ### Funcionalidades Implementadas
 
 **1. Relatório de Vendas**
